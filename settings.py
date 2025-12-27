@@ -1,14 +1,22 @@
 from os import environ
 
+# SESSION_CONFIGS = [
+#     dict(
+#         name="mini_pilot_trading",
+#         display_name="Mini Pilot Trading Experiment (Urgency Cues)",
+#         app_sequence=["mini_pilot_trading"],
+#         num_demo_participants=1,
+#     ),
+# ]
+
 SESSION_CONFIGS = [
     dict(
-        name="mini_pilot_trading",
-        display_name="Mini Pilot Trading Experiment (Urgency Cues)",
-        app_sequence=["mini_pilot_trading"],
+        name="multi_asset_trading",
+        display_name="Multi-Asset Trading (4 assets)",
         num_demo_participants=1,
+        app_sequence=["multi_asset_trading"],
     ),
 ]
-
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.
