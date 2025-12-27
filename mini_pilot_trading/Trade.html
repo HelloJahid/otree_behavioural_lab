@@ -4,35 +4,160 @@ Trade — Round {{ round_number }} of {{ num_rounds }}
 
 {{ block content }}
 
+<style>
+    .table-wrap {
+        margin-top: 18px;
+    }
+
+    .trade-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+    }
+
+    .trade-table th,
+    .trade-table td {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px 10px;
+        vertical-align: middle;
+    }
+
+    .trade-table th {
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .rowhead {
+        width: 160px;
+        font-weight: 700;
+    }
+
+    .asset-head {
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .asset-cell {
+        text-align: center;
+    }
+
+    .asset-box {
+        display: inline-block;
+        width: 100%;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+    }
+
+    .asset-box.urgent-b {
+        border: 3px solid #2ecc71;
+        box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.12);
+    }
+
+    .urgent-banner {
+        padding: 12px 16px;
+        margin: 14px 0 14px 0;
+        border-radius: 10px;
+        font-weight: 800;
+        text-align: center;
+        border: 2px solid #2ecc71;
+        background: rgba(46, 204, 113, 0.12);
+        animation: flash 0.6s infinite;
+    }
+
+    @keyframes flash {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.25;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .rules {
+        margin-top: 14px;
+        color: #374151;
+    }
+
+    .smallnote {
+        margin-top: 6px;
+        color: #6b7280;
+        font-size: 14px;
+    }
+</style>
+
 <p><strong>Cash:</strong> {{ cash }}</p>
 <p><strong>Holdings:</strong> Asset A = {{ qty_a }} units, Asset B = {{ qty_b }} units</p>
 
-<table class="table">
-    <tr>
-        <th></th>
-        <th>Asset A (Safe)</th>
-        <th>Asset B (Lottery)</th>
-    </tr>
-    <tr>
-        <td><strong>Current price</strong></td>
-        <td>{{ price_a_str }}</td>
-        <td>{{ price_b_str }}</td>
-    </tr>
-    <tr>
-        <td><strong>Buy units</strong></td>
-        <td>{{ form.buy_a }}</td>
-        <td>{{ form.buy_b }}</td>
-    </tr>
-    <tr>
-        <td><strong>Sell units</strong></td>
-        <td>{{ form.sell_a }}</td>
-        <td>{{ form.sell_b }}</td>
-    </tr>
-</table>
+{% if urgent_b %}
+<div class="urgent-banner">LIMITED WINDOW, ASSET B IS SURGING, BUY ASSET B NOW!</div>
+{% endif %}
 
-<p>
+<div class="table-wrap">
+    <table class="trade-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th class="asset-head">Asset A (Safe)</th>
+                <th class="asset-head">Asset B (Lottery)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="rowhead">Current price</td>
+                <td class="asset-cell">
+                    <div class="asset-box">
+                        {{ price_a_str }}
+                    </div>
+                </td>
+                <td class="asset-cell">
+                    <div class="asset-box {% if urgent_b %}urgent-b{% endif %}">
+                        {{ price_b_str }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="rowhead">Buy units</td>
+                <td class="asset-cell">
+                    <div class="asset-box">
+                        {{ form.buy_a }}
+                    </div>
+                </td>
+                <td class="asset-cell">
+                    <div class="asset-box {% if urgent_b %}urgent-b{% endif %}">
+                        {{ form.buy_b }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="rowhead">Sell units</td>
+                <td class="asset-cell">
+                    <div class="asset-box">
+                        {{ form.sell_a }}
+                    </div>
+                </td>
+                <td class="asset-cell">
+                    <div class="asset-box {% if urgent_b %}urgent-b{% endif %}">
+                        {{ form.sell_b }}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p class="rules">
     Rules: you cannot sell more than you own, and you cannot spend more cash than you have.
     Sells are executed first, then buys.
+</p>
+
+<p class="smallnote">
+    You have {{ C.DECISION_TIMEOUT_SECONDS }} seconds. If time expires, your decisions default to zero.
 </p>
 
 {{ next_button }}
