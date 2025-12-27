@@ -1,0 +1,40 @@
+{{ block title }}
+Trade — Round {{ round_number }} of {{ num_rounds }}
+{{ endblock }}
+
+{{ block content }}
+
+<p><strong>Cash:</strong> {{ cash }}</p>
+<p><strong>Holdings:</strong> Asset A = {{ qty_a }} units, Asset B = {{ qty_b }} units</p>
+
+<table class="table">
+    <tr>
+        <th></th>
+        <th>Asset A (Safe)</th>
+        <th>Asset B (Lottery)</th>
+    </tr>
+    <tr>
+        <td><strong>Current price</strong></td>
+        <td>{{ price_a_str }}</td>
+        <td>{{ price_b_str }}</td>
+    </tr>
+    <tr>
+        <td><strong>Buy units</strong></td>
+        <td>{{ form.buy_a }}</td>
+        <td>{{ form.buy_b }}</td>
+    </tr>
+    <tr>
+        <td><strong>Sell units</strong></td>
+        <td>{{ form.sell_a }}</td>
+        <td>{{ form.sell_b }}</td>
+    </tr>
+</table>
+
+<p>
+    Rules: you cannot sell more than you own, and you cannot spend more cash than you have.
+    Sells are executed first, then buys.
+</p>
+
+{{ next_button }}
+
+{{ endblock }}

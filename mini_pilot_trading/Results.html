@@ -1,0 +1,35 @@
+{{ block title }}
+Results — Round {{ round_number }} of {{ num_rounds }}
+{{ endblock }}
+
+{{ block content }}
+
+{% if timed_out %}
+<p><strong>Note:</strong> You ran out of time. All trades defaulted to zero.</p>
+{% endif %}
+
+<p><strong>Prices today:</strong> A={{ price_a_str }}, B={{ price_b_str }}</p>
+<p><strong>Prices next round:</strong> A={{ price_a_next_str }}, B={{ price_b_next_str }}</p>
+
+<p><strong>Executed trades:</strong></p>
+<ul>
+    <li>Asset A: bought {{ exec_buy_a }}, sold {{ exec_sell_a }}</li>
+    <li>Asset B: bought {{ exec_buy_b }}, sold {{ exec_sell_b }}</li>
+</ul>
+
+<p><strong>End of round portfolio:</strong></p>
+<ul>
+    <li>Cash: {{ cash }}</li>
+    <li>Holdings: A={{ qty_a }}, B={{ qty_b }}</li>
+</ul>
+
+<p><strong>Valuation:</strong></p>
+<ul>
+    <li>Wealth at today’s prices: {{ wealth_now }}</li>
+    <li>Wealth at next round prices: {{ wealth_next }}</li>
+    <li>Gain from price movement: {{ gain_from_prices }}</li>
+</ul>
+
+{{ next_button }}
+
+{{ endblock }}
