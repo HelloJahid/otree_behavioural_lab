@@ -1,0 +1,15 @@
+{{ block title }}
+Final Summary
+{{ endblock }}
+
+{{ block content }}
+
+<p>You have completed all rounds.</p>
+
+<ul>
+    <li>Final cash: {{ final_cash }}</li>
+    <li>Final holdings: A={{ final_qty_a }}, B={{ final_qty_b }}, C={{ final_qty_c }}, D={{ final_qty_d }}</li>
+    <li>Final wealth at current prices: {{ final_wealth_today }}</li>
+</ul>
+
+{{ endblock }}

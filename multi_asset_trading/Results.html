@@ -1,0 +1,130 @@
+{{ block title }}
+Results — Round {{ round_number }} of {{ num_rounds }}
+{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .cardish {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: #fff;
+        margin-bottom: 14px;
+    }
+
+    .kpi {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .kpi .box {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: #fff;
+    }
+
+    .kpi .label {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 4px;
+    }
+
+    .kpi .value {
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .small {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    @media (max-width: 900px) {
+        .kpi {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
+
+{% if timed_out %}
+<div class="alert alert-warning" role="alert" style="border-radius:14px;">
+    <strong>Note:</strong> Time expired. Trades defaulted to zero.
+</div>
+{% endif %}
+
+<div class="kpi">
+    <div class="box">
+        <div class="label">Cash</div>
+        <div class="value">{{ cash }}</div>
+    </div>
+    <div class="box">
+        <div class="label">Wealth at today prices</div>
+        <div class="value">{{ wealth_today }}</div>
+    </div>
+    <div class="box">
+        <div class="label">Wealth at next prices</div>
+        <div class="value">{{ wealth_next }}</div>
+    </div>
+    <div class="box">
+        <div class="label">Gain from price movement</div>
+        <div class="value">{{ gain_from_price_move }}</div>
+    </div>
+</div>
+
+<div class="cardish">
+    <div style="font-weight:800; font-size:18px; margin-bottom:10px;">
+        Assets summary
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle text-center" style="margin-bottom:0;">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-start" style="min-width:170px;">Item</th>
+                    {% for s in slots %}
+                    <th style="min-width:120px;">{{ s.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td class="text-start"><strong>Price today</strong></td>
+                    {% for s in slots %}<td>{{ s.price_now_str }}</td>{% endfor %}
+                </tr>
+
+                <tr>
+                    <td class="text-start"><strong>Price next</strong></td>
+                    {% for s in slots %}<td>{{ s.price_next_str }}</td>{% endfor %}
+                </tr>
+
+                <tr>
+                    <td class="text-start"><strong>Executed buy</strong></td>
+                    {% for s in slots %}<td>{{ s.exec_buy }}</td>{% endfor %}
+                </tr>
+
+                <tr>
+                    <td class="text-start"><strong>Executed sell</strong></td>
+                    {% for s in slots %}<td>{{ s.exec_sell }}</td>{% endfor %}
+                </tr>
+
+                <tr>
+                    <td class="text-start"><strong>Holdings after trades</strong></td>
+                    {% for s in slots %}<td>{{ s.qty }}</td>{% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="small" style="margin-top:10px;">
+        “Price next” is what your holdings would be worth at the start of the next round, holding quantities fixed.
+    </div>
+</div>
+
+{{ next_button }}
+
+{{ endblock }}
