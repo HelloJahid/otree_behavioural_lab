@@ -68,6 +68,91 @@ Trade — Round {{ round_number }} of {{ num_rounds }}
         color: #6b7280;
         font-size: 14px;
     }
+
+
+    /* #new added */
+    /* show table on desktop, cards on mobile */
+    .desktop-only {
+        display: block;
+    }
+
+    .mobile-only {
+        display: none;
+    }
+
+    @media (max-width: 576px) {
+
+        .asset-card input[type="number"],
+        .asset-card input[type="text"] {
+            width: 74px;
+            padding: 6px 8px;
+            font-size: 16px;
+            border-radius: 10px;
+            text-align: right;
+        }
+
+        .asset-card {
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 12px;
+        }
+
+        .asset-card-title {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .asset-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .trade-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trade-line label {
+            font-weight: 800;
+            margin: 0;
+            font-size: 14px;
+            color: #111827;
+        }
+
+        .trade-input {
+            width: 74px;
+            padding: 6px 8px;
+            font-size: 16px;
+            border-radius: 10px;
+            text-align: right;
+            box-sizing: border-box;
+        }
+
+        .trade-pair {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .asset-box input {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: block;
+            margin: 0 auto;
+            font-size: 16px;
+            /* prevents iPhone zoom and weird glyphs */
+            line-height: 1.2;
+            padding: 8px 10px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+    }
 </style>
 
 <p><strong>Cash:</strong> {{ cash }}</p>
@@ -76,66 +161,109 @@ Trade — Round {{ round_number }} of {{ num_rounds }}
 <div class="urgent-banner">LIMITED WINDOW, ASSET B IS SURGING, BUY ASSET B NOW!</div>
 {% endif %}
 
-<table class="trade-table">
-    <thead>
-        <tr>
-            <th></th>
-            {% for s in slots %}
-            <th>{{ s.label }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
+<div class="desktop-only">
+    <table class="trade-table">
+        <thead>
+            <tr>
+                <th></th>
+                {% for s in slots %}
+                <th>{{ s.label }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
 
-    <tbody>
-        <tr>
-            <td class="rowhead">Current price</td>
-            {% for s in slots %}
-            <td>
-                <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">{{ s.price_now_str }}</div>
-            </td>
-            {% endfor %}
-        </tr>
+        <tbody>
+            <tr>
+                <td class="rowhead">Current price</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">{{ s.price_now_str }}</div>
+                </td>
+                {% endfor %}
+            </tr>
 
-        <tr>
-            <td class="rowhead">Holdings</td>
-            {% for s in slots %}
-            <td>
-                <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">{{ s.qty }}</div>
-            </td>
-            {% endfor %}
-        </tr>
+            <tr>
+                <td class="rowhead">Holdings</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">{{ s.qty }}</div>
+                </td>
+                {% endfor %}
+            </tr>
 
-        <tr>
-            <td class="rowhead">Buy units</td>
-            {% for s in slots %}
-            <td>
-                <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">
+            <tr>
+                <td class="rowhead">Buy units</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">
+                        {% if s.underlying == 'A' %}{{ form.buy_a }}
+                        {% elif s.underlying == 'B' %}{{ form.buy_b }}
+                        {% elif s.underlying == 'C' %}{{ form.buy_c }}
+                        {% else %}{{ form.buy_d }}
+                        {% endif %}
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="rowhead">Sell units</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">
+                        {% if s.underlying == 'A' %}{{ form.sell_a }}
+                        {% elif s.underlying == 'B' %}{{ form.sell_b }}
+                        {% elif s.underlying == 'C' %}{{ form.sell_c }}
+                        {% else %}{{ form.sell_d }}
+                        {% endif %}
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div class="mobile-only">
+    {% for s in slots %}
+    <div class="asset-card {% if s.urgent %}urgent-b{% endif %}">
+        <div class="asset-card-title">{{ s.label }}</div>
+
+        <div class="asset-meta">
+            <div><strong>Price</strong> {{ s.price_now_str }}</div>
+            <div><strong>Hold</strong> {{ s.qty }}</div>
+        </div>
+
+        <div class="trade-line">
+            <div class="trade-pair">
+                <label>Buy</label>
+                <div>
                     {% if s.underlying == 'A' %}{{ form.buy_a }}
                     {% elif s.underlying == 'B' %}{{ form.buy_b }}
                     {% elif s.underlying == 'C' %}{{ form.buy_c }}
                     {% else %}{{ form.buy_d }}
                     {% endif %}
                 </div>
-            </td>
-            {% endfor %}
-        </tr>
+            </div>
 
-        <tr>
-            <td class="rowhead">Sell units</td>
-            {% for s in slots %}
-            <td>
-                <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">
+            <div class="trade-pair">
+                <label>Sell</label>
+                <div>
                     {% if s.underlying == 'A' %}{{ form.sell_a }}
                     {% elif s.underlying == 'B' %}{{ form.sell_b }}
                     {% elif s.underlying == 'C' %}{{ form.sell_c }}
                     {% else %}{{ form.sell_d }}
                     {% endif %}
                 </div>
-            </td>
-            {% endfor %}
-        </tr>
-    </tbody>
-</table>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+
+
 
 <p class="smallnote">
     You have {{ timeout_seconds }} seconds. If time expires, your decisions default to zero.
