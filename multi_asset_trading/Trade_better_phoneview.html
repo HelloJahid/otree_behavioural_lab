@@ -1,0 +1,386 @@
+{{ block title }}
+Trade — Round {{ round_number }} of {{ num_rounds }}
+{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .trade-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+    }
+
+    .trade-table th,
+    .trade-table td {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px 10px;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .rowhead {
+        width: 160px;
+        font-weight: 700;
+        text-align: left;
+    }
+
+    .asset-box {
+        display: inline-block;
+        width: 100%;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 10px;
+    }
+
+    .urgent-b {
+        border: 3px solid #2ecc71 !important;
+        box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.12);
+    }
+
+    .urgent-banner {
+        padding: 12px 16px;
+        margin: 14px 0;
+        border-radius: 10px;
+        font-weight: 900;
+        text-align: center;
+        border: 2px solid #2ecc71;
+        background: rgba(46, 204, 113, 0.12);
+        animation: flash 0.6s infinite;
+    }
+
+    @keyframes flash {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.25;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .smallnote {
+        margin-top: 10px;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+
+    /* #new added */
+    /* =========================
+   MOBILE VIEW ONLY
+   ========================= */
+
+    .desktop-only {
+        display: block;
+    }
+
+    .mobile-only {
+        display: none;
+    }
+
+    @media (max-width: 576px) {
+
+        .desktop-only {
+            display: none !important;
+        }
+
+        .mobile-only {
+            display: block !important;
+        }
+
+        body {
+            overflow-x: hidden;
+            overscroll-behavior-x: none;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .mobile-grid,
+        .asset-tile,
+        .qa button {
+            touch-action: manipulation;
+        }
+
+        .mobile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .asset-tile {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 10px;
+            background: #fff;
+            box-sizing: border-box;
+            min-height: 186px;
+        }
+
+        .asset-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2px;
+        }
+
+        .asset-name {
+            font-size: 16px;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .asset-hold {
+            font-size: 13px;
+            font-weight: 900;
+            color: #374151;
+        }
+
+        .asset-sub {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        /* TWO-LINE CONTROL ROWS */
+        .trade-row {
+            display: grid;
+            grid-template-columns: 42px 1fr;
+            /* label + input */
+            column-gap: 8px;
+            row-gap: 6px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .trade-row .lbl {
+            font-size: 14px;
+            font-weight: 900;
+            color: #111827;
+        }
+
+        .trade-row input[type="number"],
+        .trade-row input[type="text"] {
+            width: 100%;
+            height: 36px;
+            font-size: 18px;
+            /* prevents iOS zoom */
+            border-radius: 12px;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 0 6px;
+        }
+
+        /* buttons go full width under input */
+        .trade-row .qa {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+
+        .trade-row .qa button {
+            height: 34px;
+            font-size: 16px;
+            font-weight: 900;
+            border-radius: 12px;
+            border: 2px solid #d1d5db;
+            background: #f9fafb;
+            line-height: 1;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .trade-row .qa button:active {
+            transform: scale(0.98);
+        }
+
+        .urgent-tile {
+            border: 2px solid #22c55e !important;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .sell-muted .lbl {
+            opacity: 0.55;
+        }
+
+        .otree-footer {
+            display: none !important;
+        }
+    }
+
+
+
+    /* end style */
+</style>
+
+<p><strong>Cash:</strong> {{ cash }}</p>
+
+{% if urgent_any %}
+<div class="urgent-banner">LIMITED WINDOW, ASSET B IS SURGING, BUY ASSET B NOW!</div>
+{% endif %}
+
+<div class="desktop-only">
+    <table class="trade-table">
+        <thead>
+            <tr>
+                <th></th>
+                {% for s in slots %}
+                <th>{{ s.label }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td class="rowhead">Current price</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">{{ s.price_now_str }}</div>
+                </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="rowhead">Holdings</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">{{ s.qty }}</div>
+                </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="rowhead">Buy units</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">
+                        {% if s.underlying == 'A' %}{{ form.buy_a }}
+                        {% elif s.underlying == 'B' %}{{ form.buy_b }}
+                        {% elif s.underlying == 'C' %}{{ form.buy_c }}
+                        {% else %}{{ form.buy_d }}
+                        {% endif %}
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+
+            <tr>
+                <td class="rowhead">Sell units</td>
+                {% for s in slots %}
+                <td>
+                    <div class="asset-box {% if s.urgent %}urgent-b{% endif %}">
+                        {% if s.underlying == 'A' %}{{ form.sell_a }}
+                        {% elif s.underlying == 'B' %}{{ form.sell_b }}
+                        {% elif s.underlying == 'C' %}{{ form.sell_c }}
+                        {% else %}{{ form.sell_d }}
+                        {% endif %}
+                    </div>
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="mobile-only">
+    <div class="mobile-grid">
+        {% for s in slots %}
+        <div class="asset-tile {% if s.urgent %}urgent-tile{% endif %}">
+
+            <div class="asset-head">
+                <div class="asset-name">{{ s.label }}</div>
+                <div class="asset-hold">H {{ s.qty }}</div>
+            </div>
+
+            <div class="asset-sub">P {{ s.price_now_str }}</div>
+
+            <!-- BUY -->
+            <div class="trade-row">
+                <div class="lbl">Buy</div>
+                <div class="buy-field">
+                    {% if s.underlying == 'A' %}{{ form.buy_a }}
+                    {% elif s.underlying == 'B' %}{{ form.buy_b }}
+                    {% elif s.underlying == 'C' %}{{ form.buy_c }}
+                    {% else %}{{ form.buy_d }}
+                    {% endif %}
+                </div>
+
+                <div class="qa">
+                    <button type="button"
+                        onclick="this.closest('.asset-tile').querySelector('.buy-field input').stepUp()">+1</button>
+                    <button type="button"
+                        onclick="for(let i=0;i<2;i++)this.closest('.asset-tile').querySelector('.buy-field input').stepUp()">+2</button>
+                    <button type="button"
+                        onclick="for(let i=0;i<3;i++)this.closest('.asset-tile').querySelector('.buy-field input').stepUp()">+3</button>
+                </div>
+            </div>
+
+            <!-- SELL -->
+            <div class="trade-row {% if s.qty == 0 %}sell-muted{% endif %}">
+                <div class="lbl">Sell</div>
+                <div class="sell-field">
+                    {% if s.underlying == 'A' %}{{ form.sell_a }}
+                    {% elif s.underlying == 'B' %}{{ form.sell_b }}
+                    {% elif s.underlying == 'C' %}{{ form.sell_c }}
+                    {% else %}{{ form.sell_d }}
+                    {% endif %}
+                </div>
+
+                <div class="qa">
+                    <button type="button"
+                        onclick="this.closest('.asset-tile').querySelector('.sell-field input').stepUp()">+1</button>
+                    <button type="button"
+                        onclick="for(let i=0;i<2;i++)this.closest('.asset-tile').querySelector('.sell-field input').stepUp()">+2</button>
+                    <button type="button"
+                        onclick="for(let i=0;i<3;i++)this.closest('.asset-tile').querySelector('.sell-field input').stepUp()">+3</button>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<p class="smallnote">
+    You have {{ timeout_seconds }} seconds. If time expires, your decisions default to zero.
+</p>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function setEnabled(selector, enabled) {
+            document.querySelectorAll(selector).forEach(el => {
+                el.disabled = !enabled;
+            });
+        }
+
+        function apply() {
+            const mobile = window.matchMedia("(max-width: 576px)").matches;
+
+            if (mobile) {
+                setEnabled(".desktop-only input, .desktop-only select, .desktop-only textarea, .desktop-only button", false);
+                setEnabled(".mobile-only input, .mobile-only select, .mobile-only textarea, .mobile-only button", true);
+            } else {
+                setEnabled(".mobile-only input, .mobile-only select, .mobile-only textarea, .mobile-only button", false);
+                setEnabled(".desktop-only input, .desktop-only select, .desktop-only textarea, .desktop-only button", true);
+            }
+        }
+
+        apply();
+        window.addEventListener("resize", apply);
+    });
+</script>
+
+
+{{ next_button }}
+
+{{ endblock }}
